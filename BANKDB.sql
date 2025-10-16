@@ -84,3 +84,34 @@ FROM Loan
 GROUP BY branch_name;
 
 SELECT * FROM BranchLoanSummary;
+
+SELECT d.customer_name, b.branch_name, COUNT(*) AS num_accounts
+FROM Depositer d
+JOIN BankAccount b ON d.accno = b.accno
+GROUP BY d.customer_name, b.branch_name
+HAVING COUNT(*) >= 2;
+
+SELECT DISTINCT d.customer_name
+FROM Depositer d
+JOIN BankAccount b ON d.accno = b.accno
+JOIN Loan l ON b.branch_name = l.branch_name
+WHERE b.branch_name = 'Bangalore';
+
+SELECT branch_name
+FROM Branch
+WHERE assets > (
+    SELECT MAX(assets)
+    FROM Branch
+    WHERE branch_city = 'Bangalore'
+);
+
+DELETE FROM BankAccount
+WHERE branch_name IN (
+    SELECT branch_name
+    FROM Branch
+    WHERE branch_city = 'Delhi'
+);
+
+UPDATE BankAccount b
+JOIN BankAccount temp ON b.accno = temp.accno
+SET b.balance = b.balance * 1.05;
